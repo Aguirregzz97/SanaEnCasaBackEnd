@@ -1,7 +1,16 @@
 var express = require('express')
 var app = express()
 
+var MongoClient = require('mongodb').MongoClient
+const url = "mongodb+srv://andres-aguirre:J01GtxiiqmWVhPkC@inventariosanaencasa-5zhij.mongodb.net/test?retryWrites=true";
+
 app.listen(process.env.PORT || 3000)
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    next()
+  })
 
 // J01GtxiiqmWVhPkC
 
@@ -42,18 +51,23 @@ app.listen(process.env.PORT || 3000)
         //     { id: 2 },
         //     { $set: { id: 1} }
         // )
-        
-        
-var MongoClient = require('mongodb').MongoClient
 
-const url = "mongodb+srv://andres-aguirre:J01GtxiiqmWVhPkC@inventariosanaencasa-5zhij.mongodb.net/test?retryWrites=true";
-// Connect to the db
-MongoClient.connect(url, { useNewUrlParser: true }, async (err, client) => {
-     if(err) {
-         console.log('hubo un error')
-     } else {
-        //Write databse Insert/Update/Query code here..
-
-
-     }
+app.get('/login/:user/:password', (req, res) => {
+    MongoClient.connect(url, { useNewUrlParser: true }, async (err, client) => {
+        if(err) {
+            console.log(error)
+        } else {
+            var users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
+            for (const user of users) {
+                if (user.usuario.toLowerCase() === req.params.user.toLowerCase() && user.clave.toLowerCase() === req.params.password.toLowerCase()) {
+                    res.send(true)
+                }
+            }
+            res.send(false)
+        }
+   })
 })
+        
+
+// Connect to the db
+
