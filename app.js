@@ -12,6 +12,7 @@ app.use(function(req, res, next) {
     next()
   })
 
+
 // J01GtxiiqmWVhPkC
 
 // queries
@@ -52,22 +53,13 @@ app.use(function(req, res, next) {
         //     { $set: { id: 1} }
         // )
 
-app.get('/login/:user/:password', (req, res) => {
-    MongoClient.connect(url, { useNewUrlParser: true }, async (err, client) => {
-        if(err) {
-            console.log(error)
-        } else {
-            var users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
-            for (const user of users) {
-                if (user.usuario.toLowerCase() === req.params.user.toLowerCase() && user.clave.toLowerCase() === req.params.password.toLowerCase()) {
-                    res.send(true)
-                }
-            }
-            res.send(false)
+app.get('/login/:user/:password', async (req, res) => {
+    const client = await  MongoClient.connect(url, { useNewUrlParser: true })
+    const users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
+    for (const user of users) {
+        if (user.usuario.toLowerCase() === req.params.user.toLowerCase() && user.clave.toLowerCase() === req.params.password.toLowerCase()) {
+            res.send(true)
         }
-   })
+    }
+    res.send(false)
 })
-        
-
-// Connect to the db
-
