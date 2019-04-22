@@ -12,7 +12,6 @@ app.use(function(req, res, next) {
     next()
   })
 
-
 // J01GtxiiqmWVhPkC
 
 // queries
@@ -54,7 +53,7 @@ app.use(function(req, res, next) {
         // )
 
 app.get('/login/:user/:password', async (req, res) => {
-    const client = await  MongoClient.connect(url, { useNewUrlParser: true })
+    const client = await MongoClient.connect(url, { useNewUrlParser: true })
     const users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
     for (const user of users) {
         if (user.usuario.toLowerCase() === req.params.user.toLowerCase() && user.clave.toLowerCase() === req.params.password.toLowerCase()) {
@@ -63,3 +62,69 @@ app.get('/login/:user/:password', async (req, res) => {
     }
     res.send(false)
 })
+
+app.get('/test', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+    var equipoMedico = {
+        id: '3',
+        codigo: 3,
+        tipoDeEquipoMedico: 'tipoEquipoMedico3',
+        descripcion: 'desc3',
+        caso: 'caso3',
+        donador: 'donador3',
+        factura: 'factura3',
+        fechaDeCompra: 'fechaDeCompra3',
+        casosAnteriores: 'CasosAnterirores3',
+        activo: true,
+        fechaDeBaja: 'fechaDeBaja3',
+        razonDeBaja: 'razonDeBaja3',
+    }
+    await client.db('SanaEnCasaDB').collection('equipoMedico').insertOne(equipoMedico)
+    res.send('done')
+})
+
+app.get('/addPaciente', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+    var paciente = {
+        id: '1',
+        caso: 'caso1',
+        fecha: 'fecha1',
+        nombre: 'nombre1',
+        edad: 1,
+        sexo: 'Mujer',
+        padecimiento: 'padecimiento1',
+        responsable: 'responsable1',
+        direccion: 'direccion1',
+        municipio: 'municipio1',
+        telefono: 'telefono1',
+        celular: 'celular1',
+        correo: 'correo1',
+        nivelSocioeconomico: 'nivelSocioeconomico1',
+        descripcionDelCaso: 'descripcionDelCaso1',
+        activo: false,
+        fechaEgreso: 'fechaDeEgreso1',
+    }
+    await client.db('SanaEnCasaDB').collection('paciente').insertOne(paciente)
+    res.send('done')
+})
+
+app.get('/inventario/:entity/get', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+    const entities = await client.db('SanaEnCasaDB').collection(req.params.entity).find().toArray()
+    res.send(entities)
+})
+
+app.get('/inevntario/:entity/post', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+})
+
+app.get('/inevntario/:entity/edit', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+
+})
+
+app.get('/inevntario/:entity/delete', async (req, res) => {
+    const client = await MongoClient.connect(url, {useNewUrlParser: true})
+
+})
+
