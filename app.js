@@ -1,9 +1,19 @@
 var express = require('express')
 var cors = require('cors')
 var app = express()
+var bodyParser = require('body-parser')
+
 
 var MongoClient = require('mongodb').MongoClient
 const url = "mongodb+srv://andres-aguirre:J01GtxiiqmWVhPkC@inventariosanaencasa-5zhij.mongodb.net/test?retryWrites=true";
+
+
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.listen(process.env.PORT || 3000)
 
@@ -113,14 +123,17 @@ app.get('/inventario/:entity/get', async (req, res) => {
 
 app.post('/inventario/:entity/post', async (req, res) => {
     const client = await MongoClient.connect(url, {useNewUrlParser: true})
-    const objToAdd = await req.body
-    console.log(objToAdd)
-    await client.insertOne(objToAdd)
+    try {
+        const objToAdd = req.body
+        await client.db('SanaEnCasaDB').collection(req.params.entity).insertOne(objToAdd)
+    } catch (error) {
+        console.log(error)
+    }
+    return res.status(201).send(req.body)
 })
 
 app.get('/inevntario/:entity/edit', async (req, res) => {
     const client = await MongoClient.connect(url, {useNewUrlParser: true})
-
 })
 
 app.get('/inevntario/:entity/delete', async (req, res) => {
