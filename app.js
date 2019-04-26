@@ -1,4 +1,5 @@
 var express = require('express')
+var cors = require('cors')
 var app = express()
 
 var MongoClient = require('mongodb').MongoClient
@@ -6,11 +7,7 @@ const url = "mongodb+srv://andres-aguirre:J01GtxiiqmWVhPkC@inventariosanaencasa-
 
 app.listen(process.env.PORT || 3000)
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    next()
-  })
+app.use(cors())
 
 // J01GtxiiqmWVhPkC
 
@@ -56,7 +53,7 @@ app.get('/login/:user/:password', async (req, res) => {
     const client = await MongoClient.connect(url, { useNewUrlParser: true })
     const users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
     for (const user of users) {
-        if (user.usuario.toLowerCase() === req.params.user.toLowerCase() && user.clave.toLowerCase() === req.params.password.toLowerCase()) {
+        if (user.usuario === req.params.user && user.clave === req.params.password) {
             res.send(true)
         }
     }
@@ -86,23 +83,23 @@ app.get('/test', async (req, res) => {
 app.get('/addPaciente', async (req, res) => {
     const client = await MongoClient.connect(url, {useNewUrlParser: true})
     var paciente = {
-        id: '1',
-        caso: 'caso1',
-        fecha: 'fecha1',
-        nombre: 'nombre1',
-        edad: 1,
-        sexo: 'Mujer',
-        padecimiento: 'padecimiento1',
-        responsable: 'responsable1',
-        direccion: 'direccion1',
-        municipio: 'municipio1',
-        telefono: 'telefono1',
-        celular: 'celular1',
-        correo: 'correo1',
-        nivelSocioeconomico: 'nivelSocioeconomico1',
-        descripcionDelCaso: 'descripcionDelCaso1',
+        id: '2',
+        caso: 'caso2',
+        fecha: 'fecha2',
+        nombre: 'nombre2',
+        edad: 2,
+        sexo: 'Hombre',
+        padecimiento: 'padecimiento2',
+        responsable: 'responsable2',
+        direccion: 'direccion2',
+        municipio: 'municipio2',
+        telefono: 'telefono2',
+        celular: 'celular2',
+        correo: 'correo2',
+        nivelSocioeconomico: 'nivelSocioeconomico2',
+        descripcionDelCaso: 'descripcionDelCaso2',
         activo: false,
-        fechaEgreso: 'fechaDeEgreso1',
+        fechaEgreso: 'fechaDeEgreso2',
     }
     await client.db('SanaEnCasaDB').collection('paciente').insertOne(paciente)
     res.send('done')
@@ -114,8 +111,11 @@ app.get('/inventario/:entity/get', async (req, res) => {
     res.send(entities)
 })
 
-app.get('/inevntario/:entity/post', async (req, res) => {
+app.post('/inventario/:entity/post', async (req, res) => {
     const client = await MongoClient.connect(url, {useNewUrlParser: true})
+    const objToAdd = await req.body
+    console.log(objToAdd)
+    await client.insertOne(objToAdd)
 })
 
 app.get('/inevntario/:entity/edit', async (req, res) => {
