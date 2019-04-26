@@ -132,8 +132,14 @@ app.post('/inventario/:entity/post', async (req, res) => {
     return res.status(201).send(req.body)
 })
 
-app.get('/inevntario/:entity/edit', async (req, res) => {
+app.put('/inventario/:entity/edit', async (req, res) => {
+    console.log(req.body)
     const client = await MongoClient.connect(url, {useNewUrlParser: true})
+    client.db('SanaEnCasaDB').collection(req.params.entity).updateOne(
+        { id: req.body.id },
+        { $set: req.body }
+    )
+    return res.status(202).send(req.body)
 })
 
 app.get('/inevntario/:entity/delete', async (req, res) => {
