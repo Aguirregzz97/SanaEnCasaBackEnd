@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 var MongoClient = require('mongodb').MongoClient
 const url = "mongodb+srv://andres-aguirre:J01GtxiiqmWVhPkC@inventariosanaencasa-5zhij.mongodb.net/test?retryWrites=true";
 
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({limit: '50mb'}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 
@@ -75,10 +75,23 @@ app.get('/login/:user/:password', async (req, res) => {
     const users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
     for (const user of users) {
         if (user.usuario === req.params.user && user.clave === req.params.password) {
-            res.send(true)
+            return res.send(true)
         }
     }
-    res.send(false)
+    return res.send(false)
+})
+
+app.get('/verifyLogin/:username/:password', async (req, res) => {
+    const client = await MongoClient.connect(url, {
+        useNewUrlParser: true
+    })
+    const users = await client.db('SanaEnCasaDB').collection('Usuarios').find().toArray()
+    for (const user of users) {
+        if (user.usuario === req.params.username && user.clave === req.params.password) {
+            return res.send(true)
+        }
+    }
+    return res.send(false)
 })
 
 app.get('/inventario/:entity/get', async (req, res) => {
