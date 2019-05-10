@@ -1,7 +1,8 @@
-var express = require('express')
-var cors = require('cors')
-var app = express()
-var bodyParser = require('body-parser')
+const express = require('express')
+const cors = require('cors')
+const app = express()
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 
 var MongoClient = require('mongodb').MongoClient
@@ -17,9 +18,11 @@ app.use(bodyParser.urlencoded({
 // parse application/json
 app.use(bodyParser.json())
 
-app.listen(process.env.PORT || 3000)
 
 app.use(cors())
+
+
+app.listen(process.env.PORT || 3000)
 
 // J01GtxiiqmWVhPkC
 
@@ -60,6 +63,17 @@ app.use(cors())
 //     { id: 2 },
 //     { $set: { id: 1} }
 // )
+
+app.put('/uploadFile', async (req, res) => {
+    const client = await MongoClient.connect(url, {
+        useNewUrlParser: true
+    })
+    await client.db('SanaEnCasaDB').collection('paciente').updateOne(
+        { id: req.body.id },
+        { $set: { 'image64': req.body.image64 } }
+    )
+    return res.status(201).send(req.body)
+})
 
 app.get('/login/:user/:password', async (req, res) => {
     const client = await MongoClient.connect(url, {
